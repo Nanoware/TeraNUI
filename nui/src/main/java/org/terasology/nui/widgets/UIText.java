@@ -44,6 +44,7 @@ import org.terasology.nui.events.NUIKeyEvent;
 import org.terasology.nui.events.NUIMouseClickEvent;
 import org.terasology.nui.events.NUIMouseDragEvent;
 import org.terasology.nui.events.NUIMouseReleaseEvent;
+import org.terasology.nui.events.NUIMouseDoubleClickEvent;
 import org.terasology.nui.util.RectUtility;
 
 import java.awt.Toolkit;
@@ -147,6 +148,23 @@ public class UIText extends WidgetWithOrder {
             if (event.getMouseButton() == MouseInput.MOUSE_LEFT) {
                 dragging = false;
             }
+        }
+
+        /**
+         * Defines what to do when the user double-clicks a mouse button while pointing at the widget. More specifically,
+         * it selects all the text, if there is any.
+         *
+         * @param event The event corresponding to the mouse double-click
+         * @return      Whether a left mouse double-click was successfully detected and handled
+         */
+        @Override
+        public boolean onMouseDoubleClick(NUIMouseDoubleClickEvent event) {
+            if (!getText().isEmpty() && event.getMouseButton() == MouseInput.MOUSE_LEFT){
+                setCursorPosition(getText().length());
+                selectionStart = 0;
+                return true;
+            }
+            return false;
         }
     };
 
