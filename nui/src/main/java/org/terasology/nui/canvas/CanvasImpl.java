@@ -609,7 +609,7 @@ public class CanvasImpl implements CanvasControl {
 
     @Override
     public void drawTextureRaw(UITextureRegion texture, Rectanglei region, Color color, ScaleMode mode, float ux, float uy, float uw, float uh) {
-        if (!state.cropRegion.intersects(relativeToAbsolute(region))) {
+        if (!state.cropRegion.intersectsRectangle(relativeToAbsolute(region))) {
             return;
         }
         Rectanglei absoluteRegion = relativeToAbsolute(region);
@@ -637,7 +637,7 @@ public class CanvasImpl implements CanvasControl {
 
     @Override
     public void drawTextureRawBordered(UITextureRegion texture, Rectanglei region, Border border, boolean tile, float ux, float uy, float uw, float uh) {
-        if (!state.cropRegion.intersects(relativeToAbsolute(region))) {
+        if (!state.cropRegion.intersectsRectangle(relativeToAbsolute(region))) {
             return;
         }
         Rectanglei absoluteRegion = relativeToAbsolute(region);

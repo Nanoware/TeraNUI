@@ -4,6 +4,7 @@ plugins {
 
 ext {
     nuiVersion = "0.1"
+    jomlVersion = "1.9.25"
 }
 
 dependencies {

@@ -33,7 +33,11 @@ dependencies {
     implementation group: 'org.terasology', name: 'gestalt-asset-core', version: '5.1.5'
 
     implementation group: 'com.google.guava', name: 'guava', version: '23.0'
-    api group: 'org.joml', name: 'joml', version: '1.9.24'
+    api ('org.joml:joml') {
+        version {
+            require jomlVersion
+        }
+    }
 }
 
 publishing {
