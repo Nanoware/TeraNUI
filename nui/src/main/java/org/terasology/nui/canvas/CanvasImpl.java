@@ -285,6 +285,28 @@ public class CanvasImpl implements CanvasControl {
         return false;
     }
 
+    /**
+     * Returns the scale factor to scale the UI by, relative to the screen size.
+     * < 1 is smaller, > 1 is larger and = 1 is the same as the screen size.
+     *
+     * @return the current UI scale
+     */
+    @Override
+    public float getUiScale() {
+        return uiScale;
+    }
+
+    /**
+     * Sets the UI scale factor, relative to the screen size
+     * < 1 is smaller, > 1 is larger and = 1 is the same as the screen size.
+     *
+     * @param uiScale the scale factor to use
+     */
+    @Override
+    public void setUiScale(float uiScale) {
+        this.uiScale = uiScale;
+    }
+
     @Override
     public SubRegion subRegion(Rectanglei region, boolean crop) {
         return new SubRegionImpl(region, crop);

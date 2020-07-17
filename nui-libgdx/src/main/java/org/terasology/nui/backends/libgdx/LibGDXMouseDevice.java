@@ -23,6 +23,9 @@ import org.joml.Vector2i;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * A MouseDevice implementation using LibGDX to obtain input.
+ */
 public class LibGDXMouseDevice implements MouseDevice {
     private LinkedList<MouseAction> inputQueue = new LinkedList<>();
 
@@ -40,7 +43,7 @@ public class LibGDXMouseDevice implements MouseDevice {
      */
     @Override
     public Vector2i getMousePosition() {
-        return GDXInputUtil.GDXToNUIMousePosition(Gdx.input.getX(), Gdx.input.getY());
+        return GDXInputUtil.GDXToNuiMousePosition(Gdx.input.getX(), Gdx.input.getY());
     }
 
     /**
@@ -57,7 +60,7 @@ public class LibGDXMouseDevice implements MouseDevice {
      */
     @Override
     public boolean isButtonDown(int button) {
-        return Gdx.input.isButtonPressed(GDXInputUtil.TerasologyToGDXMouseButton(button));
+        return Gdx.input.isButtonPressed(GDXInputUtil.NuiToGDXMouseButton(button));
     }
 
     /**

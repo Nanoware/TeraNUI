@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class GDXInputUtil {
+    private static float uiScale = 1.0f;
+
     private GDXInputUtil() {
     }
 
@@ -198,11 +200,11 @@ public final class GDXInputUtil {
         mouseMap.put(Input.Buttons.FORWARD, MouseInput.MOUSE_5);
     }
 
-    public static Keyboard.Key GDXToTerasologyKey(int key) {
+    public static Keyboard.Key GDXToNuiKey(int key) {
         return keyMap.get(key);
     }
 
-    public static int TerasologyToGDXKey(int key) {
+    public static int NuiToGDXKey(int key) {
         for (Map.Entry<Integer, Keyboard.Key> entry : keyMap.entrySet()) {
             if (entry.getValue().getId() == key) {
                 return entry.getKey();
@@ -212,11 +214,11 @@ public final class GDXInputUtil {
         return -1;
     }
 
-    public static MouseInput GDXToTerasologyMouseButton(int button) {
+    public static MouseInput GDXToNuiMouseButton(int button) {
         return mouseMap.get(button);
     }
 
-    public static int TerasologyToGDXMouseButton(int button) {
+    public static int NuiToGDXMouseButton(int button) {
         for (Map.Entry<Integer, MouseInput> entry : mouseMap.entrySet()) {
             if (entry.getValue().getId() == button) {
                 return entry.getKey();
@@ -237,7 +239,11 @@ public final class GDXInputUtil {
         return name.length() > 1 ? 0 : name.charAt(0);
     }
 
-    public static Vector2i GDXToNUIMousePosition(int x, int y) {
-        return new Vector2i(x, y);
+    public static Vector2i GDXToNuiMousePosition(int x, int y) {
+        return new Vector2i((int) (x * uiScale), (int) (y * uiScale));
+    }
+
+    public static void setUiScale(float scale) {
+        GDXInputUtil.uiScale = scale;
     }
 }

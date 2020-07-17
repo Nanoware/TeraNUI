@@ -80,7 +80,7 @@ public class NUIInputProcessor implements InputProcessor {
         if (Input.Keys.toString(keycode).equalsIgnoreCase("UNKNOWN")) {
             return false;
         }
-        Keyboard.Key key = GDXInputUtil.GDXToTerasologyKey(keycode);
+        Keyboard.Key key = GDXInputUtil.GDXToNuiKey(keycode);
         char keyChar = GDXInputUtil.getGDXKeyChar(keycode);
         lastKey = key;
         if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT) || keyChar == '\n') {
@@ -100,7 +100,7 @@ public class NUIInputProcessor implements InputProcessor {
             return false;
         }
 
-        Keyboard.Key key = GDXInputUtil.GDXToTerasologyKey(keycode);
+        Keyboard.Key key = GDXInputUtil.GDXToNuiKey(keycode);
         char keyChar = GDXInputUtil.getGDXKeyChar(keycode);
         if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT) || Gdx.input.isKeyPressed(Input.Keys.CONTROL_RIGHT)) {
             // NOTE: Control+Key combinations do not produce valid key chars (fixes input field bugs)
@@ -131,13 +131,13 @@ public class NUIInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        mouseActionQueue.add(new MouseAction(GDXInputUtil.GDXToTerasologyMouseButton(button), ButtonState.DOWN, GDXInputUtil.GDXToNUIMousePosition(screenX, screenY)));
+        mouseActionQueue.add(new MouseAction(GDXInputUtil.GDXToNuiMouseButton(button), ButtonState.DOWN, GDXInputUtil.GDXToNuiMousePosition(screenX, screenY)));
         return CONSUME_INPUT;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        mouseActionQueue.add(new MouseAction(GDXInputUtil.GDXToTerasologyMouseButton(button), ButtonState.UP, GDXInputUtil.GDXToNUIMousePosition(screenX, screenY)));
+        mouseActionQueue.add(new MouseAction(GDXInputUtil.GDXToNuiMouseButton(button), ButtonState.UP, GDXInputUtil.GDXToNuiMousePosition(screenX, screenY)));
         return CONSUME_INPUT;
     }
 
@@ -154,7 +154,7 @@ public class NUIInputProcessor implements InputProcessor {
     @Override
     public boolean scrolled(int amount) {
         amount = (amount < 0 ? 1 : -1);
-        mouseActionQueue.add(new MouseAction(InputType.MOUSE_WHEEL.getInput(amount), amount, GDXInputUtil.GDXToNUIMousePosition(Gdx.input.getX(), Gdx.input.getY())));
+        mouseActionQueue.add(new MouseAction(InputType.MOUSE_WHEEL.getInput(amount), amount, GDXInputUtil.GDXToNuiMousePosition(Gdx.input.getX(), Gdx.input.getY())));
         return CONSUME_INPUT;
     }
 }

@@ -25,6 +25,9 @@ import org.joml.Vector2i;
 @API
 public interface MouseDevice extends InputDevice {
 
+    /**
+     * @return A queue of all input actions that have occurred over the last update for this device
+     */
     @Override
     Queue<MouseAction> getInputQueue();
 

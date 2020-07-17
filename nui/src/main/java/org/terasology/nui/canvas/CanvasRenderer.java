@@ -45,4 +45,6 @@ public interface CanvasRenderer {
                   Color shadowColor, float alpha, boolean underlined);
 
     void drawTextureBordered(UITextureRegion texture, Rectanglei absoluteRegion, Border border, boolean tile, float ux, float uy, float uw, float uh, float alpha);
+
+    void setUiScale(float uiScale);
 }

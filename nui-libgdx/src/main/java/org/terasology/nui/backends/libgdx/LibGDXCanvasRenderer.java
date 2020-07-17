@@ -25,6 +25,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.ScissorStack;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import org.terasology.nui.util.NUIMathUtil;
 import org.terasology.nui.Border;
 import org.joml.Rectanglef;
@@ -53,9 +54,14 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
     private int cropCount = 0;
     private int screenWidth;
     private int screenHeight;
+    private int scaledWidth;
+    private int scaledHeight;
+    private float uiScale;
     private boolean controlSpriteBatch;
     private boolean controlShapeRenderer;
     private Matrix4 lastMatrix;
+    private Matrix4 lastTransformMatrix;
+    private StretchViewport viewport;
 
     // NOTE: These constants were taken from Terasology's FontMeshBuilder class
     private static final int SHADOW_HORIZONTAL_OFFSET = 1;
@@ -86,16 +92,25 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
         this.shapeRenderer = shapeRenderer;
         this.controlSpriteBatch = controlSpriteBatch;
         this.controlShapeRenderer = controlShapeRenderer;
+        this.uiScale = 1.0f;
+        viewport = new StretchViewport(width * uiScale, height * uiScale);
 
         resize(width, height);
     }
 
     public void resize(int width, int height) {
         screenWidth = width;
+        scaledWidth = (int) (screenWidth * uiScale);
         screenHeight = height;
+        scaledHeight = (int) (screenHeight * uiScale);
+
+        viewport.update(width, height);
+        viewport.setWorldSize(scaledWidth, scaledHeight);
+        Gdx.gl.glViewport(0, 0, width, height);
 
         if (controlSpriteBatch) {
-            spriteBatch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, screenWidth, screenHeight));
+            viewport.apply(true);
+            spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
         }
     }
 
@@ -106,11 +121,13 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
         }
         cropCount = 0;
 
+        viewport.apply(true);
         if (controlSpriteBatch) {
             spriteBatch.begin();
         } else {
             lastMatrix = spriteBatch.getProjectionMatrix().cpy();
-            spriteBatch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, screenWidth, screenHeight));
+            lastTransformMatrix = spriteBatch.getTransformMatrix().cpy();
+            spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
         }
     }
 
@@ -120,7 +137,9 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
         if (controlSpriteBatch) {
             spriteBatch.end();
         } else {
+            Gdx.gl.glViewport(0, 0, screenWidth, screenHeight);
             spriteBatch.setProjectionMatrix(lastMatrix);
+            spriteBatch.setTransformMatrix(lastTransformMatrix);
         }
     }
 
@@ -129,9 +148,13 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
         return new Vector2i(screenWidth, screenHeight);
     }
 
+    private Vector2i getScaledTargetSize() {
+        return new Vector2i(scaledWidth, scaledHeight);
+    }
+
     @Override
     public void crop(Rectanglei cropRegion) {
-        if (cropRegion.equals(RectUtility.createFromMinAndSize(new Vector2i(), getTargetSize()))) {
+        if (cropRegion.equals(RectUtility.createFromMinAndSize(new Vector2i(), getScaledTargetSize()))) {
             spriteBatch.flush();
             for (int cropNo = 0; cropNo < cropCount; cropNo++) {
                 ScissorStack.popScissors();
@@ -141,8 +164,8 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
         }
 
         spriteBatch.flush();
-        if (ScissorStack.pushScissors(new Rectangle(cropRegion.minX, screenHeight - cropRegion.maxY,
-                cropRegion.lengthX(), cropRegion.lengthY()))) {
+        if (ScissorStack.pushScissors(new Rectangle(cropRegion.minX / uiScale, screenHeight - (cropRegion.maxY / uiScale),
+                cropRegion.lengthX() / uiScale, cropRegion.lengthY() / uiScale))) {
             cropCount++;
         } else {
             // TODO: Error Handling
@@ -159,11 +182,11 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
         if (controlShapeRenderer) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         }
-        shapeRenderer.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, screenWidth, screenHeight));
+        shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
 
         shapeRenderer.setColor(GdxColorUtil.terasologyToGDXColor(color));
         // NOTE: The constant line width 2 is used in Terasology's rendering code (which NUI's implementation relied on)
-        shapeRenderer.rectLine(sx, screenHeight - sy, ex, screenHeight - ey, 2);
+        shapeRenderer.rectLine(sx, scaledHeight - sy, ex, scaledHeight - ey, 2);
 
         shapeRenderer.flush();
         if (controlShapeRenderer) {
@@ -209,7 +232,7 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
 
         Rectanglef textureOffset = texture.getRegion();
         spriteBatch.draw(gdxTexture.getGdxTexture().getTexture(), absoluteRegion.minX,
-                screenHeight - absoluteRegion.minY - absoluteRegion.lengthY(),
+                scaledHeight - absoluteRegion.minY - absoluteRegion.lengthY(),
                 absoluteRegion.lengthX(), absoluteRegion.lengthY(),
                 (int) (ux * gdxTexture.getWidth()), (int) (uy * gdxTexture.getHeight()),
                 (int) (textureOffset.minX + uw * gdxTexture.getWidth()), (int) (textureOffset.minY + uh * gdxTexture.getHeight()), false, false);
@@ -256,7 +279,7 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
                 gdxAlignment, true);
         gdxFont.getGdxFont().draw(spriteBatch, gdxFont.getGlyphLayout(),
                 absoluteRegion.minX - SHADOW_HORIZONTAL_OFFSET,
-                screenHeight - absoluteRegion.minY - SHADOW_VERTICAL_OFFSET
+                scaledHeight - absoluteRegion.minY - SHADOW_VERTICAL_OFFSET
                         - vAlign.getOffset(Math.abs((int)gdxFont.getGlyphLayout().height), absoluteRegion.lengthY()));
 
         Deque<Color> colorStack = new LinkedList<Color>();
@@ -282,7 +305,7 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
         }
 
         int textX = absoluteRegion.minX;
-        int textY = screenHeight - absoluteRegion.minY
+        int textY = scaledHeight - absoluteRegion.minY
                 - vAlign.getOffset(Math.abs((int)gdxFont.getGlyphLayout().height), absoluteRegion.lengthY());
 
         int lineHeight = Math.abs(gdxFont.getLineHeight());
@@ -347,5 +370,12 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
                 ux, uy + uh - ((float)border.getBottom() / textureSize.y),
                 uw,
                 (float)border.getBottom() / textureSize.y, alpha);
+    }
+
+    @Override
+    public void setUiScale(float uiScale) {
+        this.uiScale = uiScale;
+        GDXInputUtil.setUiScale(uiScale);
+        resize(screenWidth, screenHeight);
     }
 }

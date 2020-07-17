@@ -16,13 +16,9 @@
 package org.terasology.nui.backends.libgdx;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import org.terasology.input.Keyboard;
 import org.terasology.input.device.KeyboardAction;
 import org.terasology.input.device.KeyboardDevice;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Queue;
 
 public class LibGDXKeyboardDevice implements KeyboardDevice {
@@ -41,6 +37,6 @@ public class LibGDXKeyboardDevice implements KeyboardDevice {
      */
     @Override
     public boolean isKeyDown(int key) {
-        return Gdx.input.isKeyPressed(GDXInputUtil.TerasologyToGDXKey(key));
+        return Gdx.input.isKeyPressed(GDXInputUtil.NuiToGDXKey(key));
     }
 }
