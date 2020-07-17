@@ -96,7 +96,6 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
 
         if (controlSpriteBatch) {
             spriteBatch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, screenWidth, screenHeight));
-            shapeRenderer.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, screenWidth, screenHeight));
         }
     }
 
@@ -156,9 +155,11 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
         spriteBatch.flush();
         spriteBatch.end();
 
+        Matrix4 lastMatrix = shapeRenderer.getProjectionMatrix().cpy();
         if (controlShapeRenderer) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         }
+        shapeRenderer.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, screenWidth, screenHeight));
 
         shapeRenderer.setColor(GdxColorUtil.terasologyToGDXColor(color));
         // NOTE: The constant line width 2 is used in Terasology's rendering code (which NUI's implementation relied on)
@@ -167,6 +168,8 @@ public class LibGDXCanvasRenderer implements CanvasRenderer {
         shapeRenderer.flush();
         if (controlShapeRenderer) {
             shapeRenderer.end();
+        } else {
+            shapeRenderer.setProjectionMatrix(lastMatrix);
         }
 
         spriteBatch.begin();
