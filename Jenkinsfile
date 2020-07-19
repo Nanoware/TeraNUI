@@ -3,12 +3,6 @@ pipeline {
         label "light-java"
     }
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Build') {
             steps {
                 sh './gradlew --info --console=plain jar'
