@@ -3,30 +3,11 @@ plugins {
     id 'maven-publish'
 }
 
+apply from: "$rootDir/gradle/common.gradle"
+
 ext {
     gdxVersion = '1.9.8'
     roboVMVersion = '2.3.3'
-}
-
-group = "org.terasology.nui"
-
-java {
-    withSourcesJar()
-    withJavadocJar()
-
-    sourceCompatibility(JavaVersion.VERSION_1_8)
-    targetCompatibility(JavaVersion.VERSION_1_8)
-}
-
-repositories {
-    // TODO: Remove mavenLocal
-    mavenLocal()
-    jcenter()
-
-    // MovingBlocks Artifactory instance for libs not readily available elsewhere plus our own libs
-    maven {
-       url "http://artifactory.terasology.org/artifactory/virtual-repo-live"
-    }
 }
 
 dependencies {
@@ -34,16 +15,4 @@ dependencies {
     api project(':nui-input')
 
     implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'org.terasology.nui'
-            artifactId = 'nui-libgdx'
-            version = nuiVersion
-
-            from components.java
-        }
-    }
 }

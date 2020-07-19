@@ -3,26 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-group = "org.terasology.nui"
-
-java {
-    withSourcesJar()
-    withJavadocJar()
-
-    sourceCompatibility(JavaVersion.VERSION_1_8)
-    targetCompatibility(JavaVersion.VERSION_1_8)
-}
-
-repositories {
-    // TODO: Remove mavenLocal
-    mavenLocal()
-    jcenter()
-
-    // MovingBlocks Artifactory instance for libs not readily available elsewhere plus our own libs
-    maven {
-       url "http://artifactory.terasology.org/artifactory/virtual-repo-live"
-    }
-}
+apply from: "$rootDir/gradle/common.gradle"
 
 dependencies {
     implementation "org.slf4j:slf4j-api:1.7.30"
@@ -36,18 +17,6 @@ dependencies {
     api ('org.joml:joml') {
         version {
             require jomlVersion
-        }
-    }
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'org.terasology.nui'
-            artifactId = 'nui-reflect'
-            version = nuiVersion
-
-            from components.java
         }
     }
 }

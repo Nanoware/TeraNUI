@@ -1,12 +1,9 @@
+// See gradle/common.gradle for more or less global build logic applied to the subprojects
+
 plugins {
     id 'idea'
 }
 
 ext {
-    nuiVersion = "0.1"
     jomlVersion = "1.9.25"
 }
-
-dependencies {
-}
-
