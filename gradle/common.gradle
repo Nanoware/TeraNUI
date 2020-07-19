@@ -62,6 +62,7 @@ javadoc {
 }
 
 group = 'org.terasology.nui'
+version = nuiVersion
 
 publishing {
     publications {
@@ -84,7 +85,7 @@ publishing {
                         String deducedPublishRepo = System.getenv()["PUBLISH_ORG"]
                         if (deducedPublishRepo == null || deducedPublishRepo == "") {
                             // If not then default
-                            deducedPublishRepo = "terasology"
+                            deducedPublishRepo = "libs"
                         }
 
                         // Base final publish repo on whether we're building a snapshot or a release
