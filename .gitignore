@@ -53,6 +53,6 @@ Thumbs.db
 # Local-only gradle settings
 local.properties
 
-# Ignore generated output of Github Pages
-docs/
+# Ignore generated output of mdbook for Github Pages
+book/
 
